@@ -1,0 +1,13 @@
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - DATABASE_CLIENT=postgres
+      - DATABASE_HOST=127.0.0.1
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=dev
+      - DATABASE_USERNAME=admin
+      - DATABASE_PASSWORD=123456
+      - DATABASE_SCHEMA=public
+      - DATABASE_SSL_SELF=false
