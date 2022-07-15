@@ -3,7 +3,54 @@ services:
   db:
     image: postgres:latest
     environment:
-      - DATABASE_CLIENT=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=dev
+      - PGDATA=/var/lib/postgresql/data
+    container_name: postgres
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - /usr/local/postgres:/var/lib/postgresql/data
+    networks:
+      - strapi
+  dev:
+    build:
+      context: ./
+      dockerfile: ./.docker/Dockerfile.dev
+      tags:
+        - "latest"
+    # Image Name
+    image: luongvantuit/strapi
+    container_name: strapi
+    depends_on:
+      - db
+    ports:
+      - 1337:1337
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=dev
+      - DATABASE_USERNAME=admin
+      - DATABASE_PASSWORD=123456
+      - DATABASE_SCHEMA=public
+      - DATABASE_SSL_SELF=false
+    command: [ "yarn", "start" ]
+    networks:
+      - strapi
+  prod:
+    build:
+      context: ./
+      dockerfile: ./.docker/Dockerfile.prod
+      tags:
+        - "latest"
+    # Image Name
+    image: luongvantuit/strapi
+    container_name: strapi
+    ports:
+      - 1337:1337
+    # Config Connect Postgres DB
+    environment:
       - DATABASE_HOST=127.0.0.1
       - DATABASE_PORT=5432
       - DATABASE_NAME=dev
@@ -11,3 +58,56 @@ services:
       - DATABASE_PASSWORD=123456
       - DATABASE_SCHEMA=public
       - DATABASE_SSL_SELF=false
+    command: [ "yarn", "start" ]
+    networks:
+      - strapi
+  pg:
+    build:
+      context: ./
+      dockerfile: ./.docker/Dockerfile.db
+      tags:
+        - "latest"
+    image: luongvantuit/pg
+  fe_db:
+    image: luongvantuit/pg:latest
+    environment:
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=dev
+      - PGDATA=/var/lib/postgresql/data
+    container_name: postgres
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - /usr/local/postgres:/var/lib/postgresql/data
+    networks:
+      - strapi
+  fe:
+    build:
+      context: ./
+      dockerfile: ./.docker/Dockerfile.dev
+      tags:
+        - "latest"
+    # Image Name
+    image: luongvantuit/strapi
+    container_name: strapi
+    depends_on:
+      - fe_db
+    ports:
+      - 1337:1337
+    environment:
+      - DATABASE_HOST=fe_db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=dev
+      - DATABASE_USERNAME=admin
+      - DATABASE_PASSWORD=123456
+      - DATABASE_SCHEMA=public
+      - DATABASE_SSL_SELF=false
+    command: [ "yarn", "start" ]
+    restart: always
+    networks:
+      - strapi
+
+networks:
+  strapi:
+    driver: bridge
