@@ -70,10 +70,10 @@ Set image of image share in docker-compose corresponding before run
 docker-compose up -d --build fe
 ```
 
-Of setup postgres available
+Or setup postgres available run docker-compose pull from Docker Hub
 
 ```shell
-docker-compose up -d fe_pg
+docker-compose up -d fe_db
 ```
 
 Complete! run
@@ -103,5 +103,5 @@ docker-compose up -d --build prod
 Requirement Postgresql with available data & pg_dump tool run
 
 ```shell
-./scripts/db_build.sh
+./scripts/db_build.sh DATABASE_HOST DATABASE_PORT DATABASE_USERNAME DATABASE_NAME IMAGE_TAG
 ```

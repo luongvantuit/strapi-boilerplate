@@ -111,3 +111,4 @@ services:
 networks:
   strapi:
     driver: bridge
+    name: strapi

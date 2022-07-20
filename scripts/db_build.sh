@@ -1,9 +1,10 @@
 set -e
 
-DATABASE_HOST=$1
-DATABASE_PORT=$2 
-DATABASE_USERNAME=$3
-DATABASE_NAME=$4
+DATABASE_HOST="${1:-"localhost"}"
+DATABASE_PORT="${2:-5432}" 
+DATABASE_USERNAME="${3:-"admin"}"
+DATABASE_NAME="${4:-"dev"}"
+IMAGE_TAG="${5:-"luongvantuit/pg"}"
 
 shift
 
@@ -20,5 +21,5 @@ docker-compose build pg
 
 # Publish to Docker Hub
 # TAG
-docker push luongvantuit/pg
+docker push $IMAGE_TAG
 fi
